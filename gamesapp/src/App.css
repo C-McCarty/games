@@ -1,0 +1,19 @@
+html, body, #root, .App {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+}
+.App {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    flex-direction: column;
+}
+
+header {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
