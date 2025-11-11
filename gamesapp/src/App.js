@@ -4,7 +4,7 @@ import './App.css';
 import Home from './comp/Home';
 import About from './comp/About';
 
-import Zip from './comp/Zip';
+import Zip from './comp/zip/Zip';
 
 import Error404 from './comp/Error404';
 
