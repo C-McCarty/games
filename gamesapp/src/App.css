@@ -118,7 +118,7 @@ nav.open {
     display: grid;
 }
 .zip-cell {
-    border: 1px solid black;
+    border: 1px solid #EEE;
     aspect-ratio: 1 / 1;
     width: 3rem;
     height: 3rem;
@@ -126,19 +126,69 @@ nav.open {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
-.zip-cell > * {
+.zip-cell > :not(div) {
     background-color: lightgray;
-    width: 80%;
-    height: 80%;
+    width: 60%;
+    height: 60%;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 100%;
     font-weight: bold;
+    position: relative;
+    z-index: 10;
 }
+
+/* Remove background for visited, use lines instead */
 .zip-cell.visited {
-    background-color: #00F;
+    background-color: transparent;
+}
+
+.visitedFilling {
+    position: absolute;
+    top: 25%;
+    left: 25%;
+    width: 50%;
+    height: 50%;
+    background: #00F;
+    border-radius: 50%;
+    z-index: 2;
+}
+
+.line-up, .line-down, .line-left, .line-right {
+    position: absolute;
+    background: #00F;
+    z-index: 1;
+}
+.line-up {
+    left: 25%;
+    top: 0;
+    width: 50%;
+    height: 50%;
+    border-radius: 2px;
+}
+.line-down {
+    left: 25%;
+    bottom: 0;
+    width: 50%;
+    height: 50%;
+    border-radius: 2px;
+}
+.line-left {
+    top: 25%;
+    left: 0;
+    height: 50%;
+    width: 50%;
+    border-radius: 2px;
+}
+.line-right {
+    top: 25%;
+    right: 0;
+    height: 50%;
+    width: 50%;
+    border-radius: 2px;
 }
 
 /* All Pages */

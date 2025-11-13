@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { useGameState } from '../hooks/zip-useGameState';
 import Grid from './Grid';
 
 export default function Zip() {
-    const { game, visitCell, resetGame, startTimer } = useGameState('level1');
+    const { game, visitCell, unvisitCell, resetGame, startTimer } = useGameState('level1');
     const [seconds, setSeconds] = useState(0);
     useEffect(() => {
         startTimer();
@@ -24,12 +24,18 @@ export default function Zip() {
                         <h3>🎉 Level Complete! 🎉</h3>
                         <h4>Time: {((endTime - startTime)/1000).toFixed(1)}s</h4>
                     </div>}
-                    <button onClick={resetGame}>New Game</button>
-                    <div>{seconds}</div>
-                    <Grid cells={cells} path={path} onCellClick={coord => {
-                        if (!startTime) startTimer();
-                        visitCell(coord);
-                    }} />
+                    <button onClick={() => {resetGame(); setSeconds(0);}}>New Game</button>
+                    {status === 'ongoing' && <div>{seconds}</div>}
+                    <Grid
+                        cells={cells}
+                        path={path}
+                        walls={game.level.walls}
+                        onCellClick={coord => {
+                            if (!startTime) startTimer();
+                            visitCell(coord);
+                        }}
+                        onCellBacktrack={unvisitCell}
+                    />
             </div>
         </div>
     );

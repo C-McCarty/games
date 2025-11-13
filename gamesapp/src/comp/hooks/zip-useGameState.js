@@ -9,11 +9,15 @@ export function useGameState(levelId) {
   useEffect(() => {
     const level = loadLevel(levelId);
     const cells = initCells(level.rows, level.cols, level.numberedCells);
+    // Mark node 1 (start) as visited and in path
+    const startCoord = level.numberedCells[0];
+    const newCells = cells.map(r => r.map(c => ({ ...c })));
+    newCells[startCoord.row][startCoord.col].visited = true;
     setGame({
       level,
-      cells,
-      path: [],
-      currentNumberIndex: 0,
+      cells: newCells,
+      path: [startCoord],
+      currentNumberIndex: 1,
       status: 'ongoing',
       startTime: undefined,
       endTime: undefined
@@ -42,7 +46,7 @@ export function useGameState(levelId) {
 
       if (path.length > 0) {
         const last = path[path.length - 1];
-        if (!isAdjacent(last, coord)) {
+        if (!isAdjacent(last, coord, level.walls)) {
           return g;
         }
       }
@@ -94,9 +98,47 @@ export function useGameState(levelId) {
   });
 }, [levelId]);
 
+  const unvisitCell = useCallback(coord => {
+    setGame(g => {
+      if (!g) return g;
+      if (g.status !== 'ongoing') return g;
+
+      const { cells, path, level } = g;
+      // Find index of coord in path
+      const idx = path.findIndex(p => p.row === coord.row && p.col === coord.col);
+      if (idx === -1) return g; // not in path
+      // Only allow backtracking if not last cell
+      if (idx === path.length - 1) return g;
+
+      // Unvisit all cells after idx
+      const newCells = cells.map(r => r.map(c => ({ ...c })));
+      for (let i = idx + 1; i < path.length; i++) {
+        const p = path[i];
+        newCells[p.row][p.col].visited = false;
+      }
+      // Recompute currentNumberIndex
+      let newCurrentNumberIndex = 0;
+      for (let i = 0; i <= idx; i++) {
+        const p = path[i];
+        if (level.numberedCells.some(nc => nc.row === p.row && nc.col === p.col)) {
+          newCurrentNumberIndex++;
+        }
+      }
+      return {
+        ...g,
+        cells: newCells,
+        path: path.slice(0, idx + 1),
+        currentNumberIndex: newCurrentNumberIndex,
+        status: 'ongoing',
+        endTime: undefined
+      };
+    });
+  }, []);
+
   return {
     game,
     visitCell,
+    unvisitCell,
     resetGame,
     startTimer
   };
